@@ -1,27 +1,49 @@
 <launch>
 	<arg name="map_file" default="$(find deep_space)/maps/hatch.yaml" />
 	<arg name="debug_window" default="0" />
-	<arg name="lidar_model" default="rplidar" />
-	<include file="$(find ydlidar)/launch/lidar.launch" if="$(eval lidar_model == 'ydlidar')"/>
-	<include file="$(find rplidar_ros)/launch/rplidar.launch" if="$(eval lidar_model == 'rplidar')"/>
+	<arg name="lidar_model" default="ydlidar" />
+	<node name="rplidarNode" pkg="rplidar_ros" type="rplidarNode" output="screen" if="$(eval lidar_model == 'rplidar')" >
+ 		<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+ 		<param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+ 		<!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
+ 		<param name="frame_id"            type="string" value="base_lidar"/>
+ 		<param name="inverted"            type="bool"   value="false"/>
+ 		<param name="angle_compensate"    type="bool"   value="true"/>
+ 	</node>
+ 	<node name="ydlidar_node"  pkg="ydlidar"  type="ydlidar_node" output="screen" respawn="false" if="$(eval lidar_model == 'ydlidar')" >
+    		<param name="port"         type="string" value="/dev/ttyUSB0"/>
+    		<param name="baudrate"     type="int"    value="115200"/>
+    		<param name="frame_id"     type="string" value="base_lidar"/>
+    		<param name="low_exposure"  type="bool"   value="false"/>
+    		<param name="resolution_fixed"    type="bool"   value="true"/>
+    		<param name="auto_reconnect"    type="bool"   value="true"/>
+    		<param name="reversion"    type="bool"   value="false"/>
+    		<param name="angle_min"    type="double" value="-180" />
+    		<param name="angle_max"    type="double" value="180" />
+    		<param name="range_min"    type="double" value="0.1" />
+    		<param name="range_max"    type="double" value="16.0" />
+    		<param name="ignore_array" type="string" value="" />
+    		<param name="samp_rate"    type="int"    value="9"/>
+    		<param name="frequency"    type="double" value="7"/>
+  	</node>
 	<node pkg="deep_space" type="lidar_processor" name="lidar_processor" output="screen">
 		<param name="lidar_model" value="$(arg lidar_model)" />
 	</node>
 	<node name="line_extractor" pkg="laser_line_extraction" type="line_extraction_node">
-		<param name="~frequency" value="30.0" />
-		<param name="~frame_id" value="laser" />
+		<param name="~frequency" value="10.0" />
+		<param name="~frame_id" value="base_lidar" />
 		<param name="~scan_topic" value="filter_scan" />
 		<param name="~publish_markers" value="true" />
 		<param name="~bearing_std_dev" value="1e-3" />
 		<param name="~range_std_dev" value="0.012" />
-		<param name="~least_sq_angle_thresh" value="0.001" />
-		<param name="~least_sq_radius_thresh" value="0.001" />
-		<param name="~max_line_gap" value="0.5" />
+		<param name="~least_sq_angle_thresh" value="0.0001" />
+		<param name="~least_sq_radius_thresh" value="0.1" />
+		<param name="~max_line_gap" value="0.6" />
 		<param name="~min_line_length" value="0.2" />
 		<param name="~min_range" value="0.5" />
-		<param name="~min_split_dist" value="0.01" />
-		<param name="~outlier_dist" value="0.06" />
-		<param name="~min_line_points" value="10" />
+		<param name="~min_split_dist" value="0.05" />
+		<param name="~outlier_dist" value="0.006" />
+		<param name="~min_line_points" value="30" />
 	</node>
 	<node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"></node>
 	<node pkg="deep_space" type="vision_processor" name="vision_processor" output="screen">

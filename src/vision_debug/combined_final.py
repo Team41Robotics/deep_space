@@ -30,7 +30,7 @@ AREA_TOLERANCE = 1000
 LEFT_TAPE = 1
 RIGHT_TAPE = 0
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(3)
 
 cWidth = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 cHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
@@ -169,33 +169,37 @@ while True:
 
     # Draw midpoint between centers of each box in a pair
 	i = 0
+	area1 = 0
 	while i < len(pairs):
-		center1 = pairs[i][0][0]
-		center2 = pairs[i + 1][0][0]
-		x = (center1[0]+center2[0])/2
-		y = (center1[1]+center2[1])/2
-		cv2.circle(finalFrame, (int(x),int(y)), 3, (255, 255, 255), -1)
-		print("Center x " + str((x / cWidth) * 2 - 1) + "\ny " + str((y / cHeight) * 2 - 1))
-		print("Pairs:", pairs[i][0])
-		box1 = cv2.boxPoints(pairs[i][0])
-		box1 = np.int0(box1)
-		print(box1)
+		area2 = pairs[i][1][0]*pairs[i][1][1] + pairs[i+1][1][0]*pairs[i+1][1][1]
+		if area2 > area1:
+			center1 = pairs[i][0][0]
+			center2 = pairs[i + 1][0][0]
+			x = (center1[0]+center2[0])/2
+			y = (center1[1]+center2[1])/2
+			cv2.circle(finalFrame, (int(x),int(y)), 3, (255, 255, 255), -1)
+			print("Center x " + str((x / cWidth) * 2 - 1) + "\ny " + str((y / cHeight) * 2 - 1))
+			print("Pairs:", pairs[i][0])
+			box1 = cv2.boxPoints(pairs[i][0])
+			box1 = np.int0(box1)
+			print(box1)
 
-		box2 = cv2.boxPoints(pairs[i+1][0])
-		box2 = np.int0(box2)
+			box2 = cv2.boxPoints(pairs[i+1][0])
+			box2 = np.int0(box2)
 		
-		box = np.concatenate((box1, box2))
-		print("beforehand",box[:,0])
-		box_x = np.multiply(np.true_divide(box[:,0],cWidth),2)-1
-		box_y = np.multiply(np.true_divide(box[:,1],cHeight),2)-1
-		print("after",box_x)
-		box = np.column_stack([box_x,box_y])
-		print("observed points:", box)
-		estimated_distance = ce.get_distance(box)
-		print("Distance:", estimated_distance)
-		#sd.putNumber("Estimated Distance", estimated_distance[0])
-		print(estimated_distance[0])#*.896+1.82)
-		#print("Distance w/Error:",(1.18223*estimated_distance[0]-4.73995))
+			box = np.concatenate((box1, box2))
+			print("beforehand",box[:,0])
+			box_x = np.multiply(np.true_divide(box[:,0],cWidth),2)-1
+			box_y = np.multiply(np.true_divide(box[:,1],cHeight),2)-1
+			print("after",box_x)
+			box = np.column_stack([box_x,box_y])
+			print("observed points:", box)
+			estimated_distance = ce.get_distance(box)
+			print("Distance:", estimated_distance)
+			#sd.putNumber("Estimated Distance", estimated_distance[0])
+			print(estimated_distance[0])#*.896+1.82)
+			#print("Distance w/Error:",(1.18223*estimated_distance[0]-4.73995))
+			area1 = area2		
 		i += 2
 
     # Draw dot in center of the screen

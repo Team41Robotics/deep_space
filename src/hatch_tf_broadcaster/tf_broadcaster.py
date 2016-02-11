@@ -7,6 +7,7 @@ from deep_space.msg import PoseXY
 from std_msgs.msg import Float64
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from geometry_msgs.msg import TransformStamped
+from math import pi
 
 pos_x, pos_y, theta = 0, 0, 0
 tfBuffer,listener = None, None
@@ -23,7 +24,7 @@ def hatch_bl_tf():
 	bl2cam_rot_mat = [bl2cam.transform.rotation.x,bl2cam.transform.rotation.y,bl2cam.transform.rotation.z,bl2cam.transform.rotation.w]
 	bl2cam_mat = tf_conversions.transformations.concatenate_matrices(tf_conversions.transformations.translation_matrix(bl2cam_trans_mat),tf_conversions.transformations.quaternion_matrix(bl2cam_rot_mat))
 
-	h2cam_mat = tf_conversions.transformations.concatenate_matrices(tf_conversions.transformations.translation_matrix((pos_x,pos_y,0)),tf_conversions.transformations.euler_matrix(0,0,0))
+	h2cam_mat = tf_conversions.transformations.concatenate_matrices(tf_conversions.transformations.translation_matrix((pos_x,pos_y,0)),tf_conversions.transformations.euler_matrix(0,0,-pi))
 
 	#hatch to base_link
 	h2bl_mat = np.dot(h2cam_mat,np.linalg.inv(bl2cam_mat))

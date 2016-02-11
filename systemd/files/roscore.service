@@ -4,6 +4,7 @@ After=network-online.target
 
 [Service]
 Type=simple
+User=nvidia
 ExecStart=/usr/local/bin/roscore.sh
 Restart=on-failure
 

@@ -11,8 +11,8 @@ def get_vision_data(debug_window):
 	pose = vision_estimation.get_camera_data(debug_window)
 	if pose is not None:
 		poseXY = PoseXY()
-		poseXY.x = pose[0]
-		poseXY.y = pose[1]
+		poseXY.x = pose[0]*.0254
+		poseXY.y = pose[1]*.0254
 		pub.publish(poseXY)
 
 def main():

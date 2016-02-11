@@ -4,6 +4,7 @@ After=roscore.service deep_space.service
 
 [Service]
 Type=simple
+User=nvidia
 ExecStart=/usr/local/bin/fisheye.sh
 Restart=on-failure
 

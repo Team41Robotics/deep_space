@@ -6,4 +6,4 @@ device=/dev/v4l/by-id/usb-HD_Camera_Manufacturer_USB_2.0_Camera-video-index0 \
 ! videoscale ! videorate \
 ! video/x-raw,width=320,height=240,framerate=12/1 \
 ! x264enc bitrate=256 tune=zerolatency \
-! rtph264pay ! udpsink host=10.0.41.109 port=5800 \
+! rtph264pay ! udpsink host=10.0.41.156 port=5800 \

@@ -4,6 +4,7 @@ After=roscore.service
 
 [Service]
 Type=simple
+User=nvidia
 ExecStart=/usr/local/bin/deep_space.sh
 Restart=on-failure
 
