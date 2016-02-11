@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 from distance_estimation import CameraEstimator
 import os
+from networktables import NetworkTables
+
+NetworkTables.initialize(server='10.0.41.2')
+sd = NetworkTables.getTable("SmartDashboard")
 
 # 1) Get video feed
 # 2) blur?
@@ -189,6 +193,7 @@ def get_camera_data(debug_window):
 			box = np.column_stack([box_x,box_y])
 			estimated_distance = ce.get_distance(box)
 			area1 = area2
+			sd.putNumber("horizontal_offset_normalized", x)
 		i += 2
 
 	# Draw dot in center of the screen

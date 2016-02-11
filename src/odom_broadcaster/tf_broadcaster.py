@@ -8,13 +8,11 @@ from geometry_msgs.msg import Point,Pose,Quaternion,Twist,Vector3
 
 sd = None
 x,y,theta,previous_time = 0,0,0,0
-idx = 0
 odom_pub = rospy.Publisher('odom',Odometry, queue_size=50)
 odom_br = tf.TransformBroadcaster()
 
 def odometry_broadcaster():
         global x,y,theta,previous_time
-	global idx
 
         current_time = rospy.Time.now()
 
@@ -32,10 +30,6 @@ def odometry_broadcaster():
         #x += dx * cos(theta) * dt
         #y += dx * sin(theta) * dt
         #theta += dtheta * dt
-
-	idx += sqrt(dx*dt)
-	print("integrated x")
-	print(idx)
 
         theta_quat = tf.transformations.quaternion_from_euler(0,0,theta)
 

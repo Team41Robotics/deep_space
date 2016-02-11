@@ -1,7 +1,7 @@
 obstacle_range: 0.5
 raytrace_range: 1.0
-footprint: [[-0.42,-0.34],[0.42,-0.34],[0.42,0.34],[-0.42,0.34]]
-inflation_radius: 0.01
-observation_sources: laser_scan_sensor
-laser_scan_sensor: {sensor_frame: base_lidar, data_type: LaserScan, topic: scan, marking: false, clearing: false}
+footprint: [[-0.42,-0.34],[0.6,-0.34],[0.6,0.34],[-0.42,0.34]]
+inflation_radius: 1
+observation_sources: filter_scan 
+filter_scan: {sensor_frame: base_lidar, data_type: LaserScan, topic: filter_scan, marking: true , clearing: true}
 

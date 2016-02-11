@@ -27,7 +27,7 @@ def filter_scan(msg, start_angle, end_angle):
 	end_index = int((end_angle - msg.angle_min) / msg.angle_increment)
 	data = list(msg.ranges)
 	for i in range(len(msg.ranges)):
-		if i < start_index or i > end_index or msg.ranges[i] > 2.0:
+		if i < start_index or i > end_index or msg.ranges[i] > 10.0:
 			data[i] = 0
 	msg.ranges = data
 	msg.scan_time = 0.0833 #1/12 #12Hz frequency means 1/12 seconds per scan
