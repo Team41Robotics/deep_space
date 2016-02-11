@@ -1,6 +1,6 @@
 [Unit]
 Description=deep_space
-After=roscore.service
+After=roscore.service virtualcams.service
 
 [Service]
 Type=simple

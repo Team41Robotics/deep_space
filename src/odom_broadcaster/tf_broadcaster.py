@@ -2,17 +2,19 @@
 import rospy 
 from networktables import NetworkTables
 import tf
-from math import sin, cos, pi 
+from math import sin, cos, pi, sqrt
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Point,Pose,Quaternion,Twist,Vector3
 
 sd = None
 x,y,theta,previous_time = 0,0,0,0
+idx = 0
 odom_pub = rospy.Publisher('odom',Odometry, queue_size=50)
 odom_br = tf.TransformBroadcaster()
 
 def odometry_broadcaster():
         global x,y,theta,previous_time
+	global idx
 
         current_time = rospy.Time.now()
 
@@ -25,9 +27,15 @@ def odometry_broadcaster():
 	#dt = (current_time-previous_time).secs
         #dt = 1/10 # 10 Hz update rate bottlenecks the robotcodes 50 Hz rate
 
-        x += dx * cos(theta) * dt
-        y += dx * sin(theta) * dt
+	x = sd.getNumber('x',0.0)
+	y = sd.getNumber('y',0.0)
+        #x += dx * cos(theta) * dt
+        #y += dx * sin(theta) * dt
         #theta += dtheta * dt
+
+	idx += sqrt(dx*dt)
+	print("integrated x")
+	print(idx)
 
         theta_quat = tf.transformations.quaternion_from_euler(0,0,theta)
 

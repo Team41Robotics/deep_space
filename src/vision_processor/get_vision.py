@@ -5,6 +5,8 @@ from deep_space.msg import PoseXY
 import vision_estimation
 
 pub = rospy.Publisher('vision_pose', PoseXY, queue_size = 1)
+NetworkTables.initialize(server='10.0.41.2')
+sd = NetworkTables.getTable("SmartDashboard")
 debug_window = False
 
 def get_vision_data(debug_window):
@@ -14,6 +16,7 @@ def get_vision_data(debug_window):
 		poseXY.x = pose[0]*.0254
 		poseXY.y = pose[1]*.0254
 		pub.publish(poseXY)
+		sd.putNumber('vertical_offset', pose[2]*.0254)
 
 def main():
 	global debug_window

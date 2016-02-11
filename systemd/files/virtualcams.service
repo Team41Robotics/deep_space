@@ -1,0 +1,12 @@
+[Unit]
+Description=Virtual Cameras
+After=loopback.service
+
+[Service]
+Type=simple
+User=nvidia
+ExecStart=/usr/local/bin/virtualcams.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

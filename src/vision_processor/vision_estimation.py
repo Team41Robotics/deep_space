@@ -25,7 +25,7 @@ AREA_TOLERANCE = 1000
 LEFT_TAPE = 1
 RIGHT_TAPE = 0
 
-cap = cv2.VideoCapture('/dev/v4l/by-id/usb-046d_081d_731EE4C0-video-index0')
+cap = cv2.VideoCapture('/dev/video6')
 
 cWidth = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 cHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)

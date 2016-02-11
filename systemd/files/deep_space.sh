@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sleep 5
 source /opt/ros/kinetic/setup.bash
 source /home/nvidia/catkin_ws/devel/setup.bash
 hostname=$(ifconfig eth0 | grep 'inet addr' | cut -d':' -f2 | awk '{print $1}')

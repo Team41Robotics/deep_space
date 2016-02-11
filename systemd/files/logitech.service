@@ -1,0 +1,12 @@
+[Unit]
+Description=Logitech Streamer
+After=virtualcams.service
+
+[Service]
+Type=simple
+User=nvidia
+ExecStart=/usr/local/bin/logitech.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

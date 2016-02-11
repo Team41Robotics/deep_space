@@ -1,11 +1,11 @@
 [Unit]
-Description=roscore
+Description=Fisheye Cam 1
 After=network-online.target loopback.service
 
 [Service]
 Type=simple
 User=nvidia
-ExecStart=/usr/local/bin/roscore.sh
+ExecStart=/usr/local/bin/fisheye.sh
 Restart=on-failure
 
 [Install]

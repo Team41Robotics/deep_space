@@ -1,0 +1,11 @@
+[Unit]
+Description=v4l2loopback Activator
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/loopback.sh
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
