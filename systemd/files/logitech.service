@@ -1,0 +1,11 @@
+[Unit]
+Description=Logitech C510
+After=roscore.service deep_space.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/logitech.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

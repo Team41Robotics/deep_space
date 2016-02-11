@@ -1,10 +1,10 @@
 [Unit]
-Description=gstreamer
+Description=Fisheye Cam
 After=roscore.service deep_space.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/gstreamer.sh
+ExecStart=/usr/local/bin/fisheye.sh
 Restart=on-failure
 
 [Install]

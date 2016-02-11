@@ -1,8 +1,12 @@
 <launch>
 	<arg name="map_file" default="$(find deep_space)/maps/hatch.yaml" />
 	<arg name="debug_window" default="0" />
-	<include file="$(find ydlidar)/launch/lidar.launch" />
-	<node pkg="deep_space" type="lidar_processor" name="lidar_processor" output="screen"></node>
+	<arg name="lidar_model" default="rplidar" />
+	<include file="$(find ydlidar)/launch/lidar.launch" if="$(eval lidar_model == 'ydlidar')"/>
+	<include file="$(find rplidar_ros)/launch/rplidar.launch" if="$(eval lidar_model == 'rplidar')"/>
+	<node pkg="deep_space" type="lidar_processor" name="lidar_processor" output="screen">
+		<param name="lidar_model" value="$(arg lidar_model)" />
+	</node>
 	<node name="line_extractor" pkg="laser_line_extraction" type="line_extraction_node">
 		<param name="~frequency" value="30.0" />
 		<param name="~frame_id" value="laser" />
