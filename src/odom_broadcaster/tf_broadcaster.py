@@ -4,7 +4,7 @@ from networktables import NetworkTables
 import tf
 from math import sin, cos, pi 
 from nav_msgs.msg import Odometry
-from geomtry_msgs.msg import Point,Pose,Quaternion,Twist,Vector3
+from geometry_msgs.msg import Point,Pose,Quaternion,Twist,Vector3
 
 sd = None
 x,y,theta = 0,0,0
@@ -16,9 +16,9 @@ def odometry_broadcaster():
 
         current_time = rospy.Time.now()
 
-        dx = sd.getNumber('linear_velocity')
+        dx = sd.getNumber('linear_velocity',0.0)
         dy = 0
-        dtheta = sd.getNumber('angular_velocity')
+        dtheta = sd.getNumber('angular_velocity',0.0)
 
         dt = 1/10 # 10 Hz update rate bottlenecks the robotcodes 50 Hz rate
 
@@ -28,11 +28,11 @@ def odometry_broadcaster():
 
         theta_quat = tf.transformations.quaternion_from_euler(0,0,theta)
 
-	odom_br.sendTransform((x,y,0),m_euler(0,0,theta),current_time,'base_link','odom')
+	odom_br.sendTransform((x,y,0),theta_quat,current_time,'base_link','odom')
 
         odom = Odometry()
         odom.header.stamp = current_time 
-        odom.pose.pose = Pose(Point(x,y,0),Quaternion(*odom_quat))
+        odom.pose.pose = Pose(Point(x,y,0),Quaternion(*theta_quat))
         odom.child_frame_id = "base_link"
         odom.twist.twist = Twist(Vector3(dx, dy, 0),Vector3(0,0,dtheta))
         odom_pub.publish(odom)

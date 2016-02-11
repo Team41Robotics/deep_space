@@ -38,6 +38,8 @@ def hatch_bl_tf():
 
 	h2odom_tran = tf_conversions.transformations.translation_from_matrix(h2odom_mat)
 	h2odom_rot = tf_conversions.transformations.quaternion_from_matrix(h2odom_mat)
+
+	h2odom = TransformStamped()
 	h2odom.header.stamp = rospy.Time.now()
 	h2odom.header.frame_id = 'hatch_frame'
 	h2odom.child_frame_id = 'odom'
