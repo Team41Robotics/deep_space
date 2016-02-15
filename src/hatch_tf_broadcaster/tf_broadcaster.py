@@ -10,10 +10,22 @@ from geometry_msgs.msg import TransformStamped
 from math import pi
 
 pos_x, pos_y, theta = 0, 0, 0
+tape_visible = False
 tfBuffer,listener = None, None
+h2odom = TransformStamped()
+h2odom.header.frame_id = 'hatch_frame'
+h2odom.child_frame_id = 'odom'
+h2odom.transform.rotation.w = 1.0 
+ 
+def hatch_bl_tf(event):
+	global h2odom,tape_visible
 
-def hatch_bl_tf():
 	br = tf2_ros.TransformBroadcaster()
+	if tape_visible is False:
+		h2odom.header.stamp = rospy.Time.now()
+        	br.sendTransform(h2odom)
+		return
+
 	try:
 		bl2cam = tfBuffer.lookup_transform('base_link', 'base_camera', rospy.Time())
 		odom2bl = tfBuffer.lookup_transform('odom', 'base_link', rospy.Time())
@@ -51,17 +63,20 @@ def hatch_bl_tf():
 	h2odom.transform.rotation.z = h2odom_rot[2]
 	h2odom.transform.rotation.w = h2odom_rot[3]
         br.sendTransform(h2odom)
+	tape_visible = False
 
 def lidar_callback(msg): 
 	global theta 
 	theta = msg.data
-	hatch_bl_tf()
+	#hatch_bl_tf()
 
 def vision_callback(msg):
-	global pos_x, pos_y
+	global pos_x, pos_y,tape_visible
 	pos_x = msg.x
 	pos_y = msg.y 
-	hatch_bl_tf()
+	#hatch_bl_tf()
+	#print('x: '+str(pos_x)+'\ty: '+str(pos_y))
+	tape_visible = True
 
 def main():
 	global tfBuffer,listener
@@ -71,6 +86,7 @@ def main():
 	rospy.Subscriber('lidar_angle', Float64, lidar_callback)
 	rospy.Subscriber('vision_pose', PoseXY, vision_callback)
 	rospy.loginfo('started hatch transform publisher')
+	rospy.Timer(rospy.Duration(.1), hatch_bl_tf)
 	rospy.spin()
 
 if __name__=='__main__':

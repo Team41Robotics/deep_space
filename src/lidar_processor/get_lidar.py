@@ -48,6 +48,7 @@ def line_callback(msg):
 		line_angle = float(line.angle+angle_offset)
 		angle_pub.publish(Float64(line_angle))
 		sd.putNumber('Angle of Line',(line_angle)*180/pi)
+		sd.putNumber('Distance to Line',line.radius)
 
 def callback(msg):
 	# Publish filter scan

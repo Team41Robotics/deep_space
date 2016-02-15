@@ -1,0 +1,1 @@
+gst-launch-1.0 -v v4l2src device=/dev/v4l/by-path/platform-3530000.xhci-usb-0:1:1.0-video-index0 ! jpegdec ! videoscale ! videorate ! video/x-raw,width=320,height=240,framerate=12/1 ! x264enc bitrate=256 tune=zerolatency ! rtph264pay ! udpsink host=10.0.41.0 port=5800 auto-multicast=true

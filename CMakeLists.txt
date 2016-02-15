@@ -202,5 +202,5 @@ include_directories(
 #################
 ##installation ##
 catkin_install_python(
-PROGRAMS bin/lidar_processor bin/vision_processor bin/hatch_tf_broadcaster bin/map_tf_broadcaster
+PROGRAMS bin/lidar_processor bin/vision_processor bin/hatch_tf_broadcaster bin/map_tf_broadcaster bin/odom_broadcaster bin/cmd_vel_sender
 DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
