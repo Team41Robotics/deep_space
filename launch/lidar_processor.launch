@@ -1,3 +1,3 @@
 <launch>
-	<node pkg="deep_space" type="lidar_processor" name="lidar_processor"></node>
+	<node pkg="deep_space" type="lidar_processor" name="lidar_processor" output="screen"></node>
 </launch>
