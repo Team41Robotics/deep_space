@@ -22,7 +22,6 @@ def getLidarData():
 	global sd
 	NetworkTables.initialize(server='10.0.41.62')
 	sd = NetworkTables.getTable("SmartDashboard")
-	rospy.init_node('getLidar',anonymous = True)
 	rospy.Subscriber('scan',LaserScan,callback)
 
 def main():
