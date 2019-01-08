@@ -3,6 +3,8 @@ import rospy
 from networktables import NetworkTables
 from sensor_msgs.msg import LaserScan
 
+import datetime # For the print to sd to show something new every deploy
+
 sd = None
 
 def callback(msg):
@@ -21,15 +23,19 @@ def callback(msg):
 def getLidarData():
 	global sd
 	rospy.loginfo('Initializing network tables')
-	NetworkTables.initialize(server='10.0.41.62')
+	NetworkTables.initialize(server='10.0.41.2')
 	sd = NetworkTables.getTable("SmartDashboard")
-	rospy.Subscriber('scan',LaserScan,callback)
+	rospy.loginfo('NetworkTables initialized')
+	rospy.Subscriber('scan',LaserScan,callback) # Callback not being called
+	# No publisher to scan topic, use rostopic info /scan to see
+	rospy.loginfo('Subscribed to scan')
 
 def main():
 	rospy.init_node('lidar_processor')
 	rospy.loginfo('starting lidar processor')
 	getLidarData()
-	rospy.spin()
+	rospy.loginfo('Printing to sd')
+	rospy.spin() # Does not get past this method call
 
 if __name__=='__main__':
 	try:
