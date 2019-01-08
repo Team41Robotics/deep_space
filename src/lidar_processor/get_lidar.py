@@ -9,6 +9,7 @@ sd = None
 
 def callback(msg):
 	rospy.loginfo('lidar front')
+	sd.putNumber('Distance in front',msg.ranges[0])
 	rospy.loginfo(msg.ranges[0])
 	rospy.loginfo('min lidar index and distance')
 	index = 0
@@ -26,15 +27,13 @@ def getLidarData():
 	NetworkTables.initialize(server='10.0.41.2')
 	sd = NetworkTables.getTable("SmartDashboard")
 	rospy.loginfo('NetworkTables initialized')
-	rospy.Subscriber('scan',LaserScan,callback) # Callback not being called
-	# No publisher to scan topic, use rostopic info /scan to see
+	rospy.Subscriber('scan',LaserScan,callback)
 	rospy.loginfo('Subscribed to scan')
 
 def main():
 	rospy.init_node('lidar_processor')
 	rospy.loginfo('starting lidar processor')
 	getLidarData()
-	rospy.loginfo('Printing to sd')
 	rospy.spin() # Does not get past this method call
 
 if __name__=='__main__':
