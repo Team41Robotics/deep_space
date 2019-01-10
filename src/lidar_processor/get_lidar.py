@@ -8,7 +8,8 @@ from math import pi
 
 sd = None # SmartDashboard instance
 pub = rospy.Publisher('filter_scan', LaserScan, queue_size=10) # Filtered scan topic from -45 to 45 degrees
-angle_pub = rospy.Publisher('heading_angle', Float64, queue_size = 10)
+angle_pub = rospy.Publisher('debug_angle', Float64, queue_size = 1)
+dist_pub = rospy.Publisher('debug_distance', Float64, queue_size = 1)
 
 def filter_scan(msg, start_angle, end_angle):
 	start_index = int((start_angle - msg.angle_min) / msg.angle_increment)
@@ -28,7 +29,9 @@ def line_callback(msg):
 				line = seg
 		rospy.loginfo('Best line: radius ' + str(line.radius) + ', angle ' + str(line.angle))
 		angle_pub.publish(Float64(line.angle*180/pi))
+		dist_pub.publish(Float64(line.radius))
 		sd.putNumber('Angle of Line',line.angle*180/pi)
+		sd.putNumber('Distance to Line',line.radius)
 		
 
 def callback(msg):
