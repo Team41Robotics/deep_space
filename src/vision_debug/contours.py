@@ -30,7 +30,7 @@ while True:
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
     cv2.imshow('gray', gray)
 
-    ret, thresh = cv2.threshold(gray, 127, 255, 0)
+    ret, thresh = cv2.threshold(gray, 175, 255, 0)
     #ret, thresh = cv2.threshold(gray, 230, 255, 0)
     cv2.imshow('thresh', thresh)
 
@@ -41,6 +41,13 @@ while True:
     cv2.drawContours(frame, contours, -1, (0,255,0), 3)
     cv2.imshow('frame', frame)
 
+    for contour in contours:
+        rect = cv2.minAreaRect(contour)
+        box = cv2.boxPoints(rect)
+        box = np.int0(box)
+        cv2.drawContours(frame, [box], 0, (0,0,255),2)
+    cv2.imshow('rectangle', frame)
+        
     if cv2.waitKey(1) == ord('c'):
         cv2.imwrite('template.png', frame)
     
