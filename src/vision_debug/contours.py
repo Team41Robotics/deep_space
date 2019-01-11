@@ -44,13 +44,18 @@ while True:
 
     # Convert image to black and white
     ret, thresh = cv2.threshold(gray, 175, 255, 0)
-    #cv2.imshow('thresh', thresh)
+    cv2.imshow('thresh', thresh)
 
     # Find contours from black and white image
     im2, contours, hierarchy = cv2.findContours(thresh,
                                                 cv2.RETR_TREE,
                                                 cv2.CHAIN_APPROX_SIMPLE)
+#    best_right_tape = ((0,0),(0,0),0)
+#    best_left_tape = ((0,0),(0,0),0)
 
+    tapes_left = []
+    tapes_right = []
+    
     # Check every contour
     for contour in contours:
 
@@ -69,16 +74,25 @@ while True:
            abs((width/height)-OPTIMAL_WH_RATIO)/(OPTIMAL_WH_RATIO)< WH_TOLERANCE and
            width*height > AREA_TOLERANCE):
 
-            cv2.drawContours(frame, [box], 0, (0,0,255),2)
+            cv2.drawContours(tapeFrame, [box], 0, (0,0,255),2)
 
             # Check if bounding boxes have correct angle of rotation
             if abs(abs(rotation) - 75) < DEGREE_TOLERANCE:
                 cv2.drawContours(tapeFrame, [box], 0, (255,255,0),2)
+                for i in range(len(tapes_left)):
+                    if (box < tape[i][0]):
+                        tapes_left.insert(i, box)
+                    elif i == len(tapes_left)-1:
+                        tapes_left.append(box)
+                
             if abs(abs(rotation) - 5) < DEGREE_TOLERANCE:
                 cv2.drawContours(tapeFrame, [box], 0, (0,255,255),2)
+                tapes_right.append(box)
+
+
 
     # Display frames            
-    cv2.imshow('rectangle', frame)
+    #cv2.imshow('rectangle', frame)
     cv2.imshow('tape detection', tapeFrame)
 
     # Take a pic and save to template.png
