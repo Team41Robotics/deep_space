@@ -10,6 +10,14 @@ import numpy as np
 
 cap = cv2.VideoCapture(1)
 
+# Load our webcam settings
+f = open('webcam_config.txt', 'r')
+settings = f.readlines()
+f.close()
+for line in settings:
+    prop, val = line.split('=')
+    cap.set(getattr(cv2, prop), float(val))
+
 while True:
 
     ret, frame = cap.read()
@@ -23,6 +31,7 @@ while True:
     cv2.imshow('gray', gray)
 
     ret, thresh = cv2.threshold(gray, 127, 255, 0)
+    #ret, thresh = cv2.threshold(gray, 230, 255, 0)
     cv2.imshow('thresh', thresh)
 
     im2, contours, hierarchy = cv2.findContours(thresh,
