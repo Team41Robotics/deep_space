@@ -106,11 +106,8 @@ while True:
         elif tape[1] == 1: # if tape is supposed to be a matching right but is left
             pairs.pop() # remove the left tape before it
             pairs.append(tape) #add the new left tape
-<<<<<<< HEAD
+
     if  len(pairs) > 0 and pairs[-1][1] == 1:
-=======
-    if pairs[-1] == 1:
->>>>>>> dc58e44e9a0d3e78f7759a5274736b3a3a8a05c2
         pairs.pop() # if the last tape is a left one remove it
         
         
