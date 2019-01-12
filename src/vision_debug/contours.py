@@ -95,27 +95,20 @@ while True:
                 if largest:
                         tapes.append([rect,0])
 
-    leftTape = True
-    print('length before' + str(len(tapes)))
-    print(tapes)
-
-#    for i,tape in enumerate(tapes):
-    i = 0
-    while i < len(tapes):
-        print(tapes[i][1])
-        
-        if (tapes[i][1] != leftTape):
-            print('removed tape:' + str(tapes[i][1]))
-            tapes.pop(i)
-        else:
-            leftTape = not leftTape
-            i += 1
-
-    print('done')
-    print(tapes)
-    print(len(tapes))
-
+    pairs = [] # array of pairs
+    leftTape = True # start by looking for left tape
     for tape in tapes:
+        if tape[1] == leftTape: # if tape matches the correct orientation 
+            pairs.append(tape) # add it to the pairs
+            leftTape = not leftTape # move on to the next tape orientation
+        elif tape[1] == 1: # if tape is supposed to be a matching right but is left
+            pairs.pop() # remove the left tape before it
+            pairs.append(tape) #add the new left tape
+    if pairs[-1] == 1:
+        pairs.pop() # if the last tape is a left one remove it
+        
+        
+    for tape in pairs:
         box = cv2.boxPoints(tape[0])
         box = np.int0(box)
         cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
