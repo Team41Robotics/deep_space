@@ -34,7 +34,6 @@ while True:
 
     ret, frame = cap.read()
     tapeFrame = frame
-    finalFrame = frame.copy()
 
     # Blur image to reduce noise
     blur = cv2.GaussianBlur(frame, (9,9), 0)
@@ -48,9 +47,14 @@ while True:
     cv2.imshow('thresh', thresh)
 
     # Find contours from black and white image
-    contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(thresh,
+                                                cv2.RETR_TREE,
+                                                cv2.CHAIN_APPROX_SIMPLE)
+#    best_right_tape = ((0,0),(0,0),0)
+#    best_left_tape = ((0,0),(0,0),0)
 
-    tapes = []
+    tapes_left = []
+    tapes_right = []
     
     # Check every contour
     for contour in contours:
@@ -66,7 +70,7 @@ while True:
         rotation = rect[2]
 
         # Check for width height ratio and 
-        if(height!=0 and
+        if(rect[1][1]!=0 and
            abs((width/height)-OPTIMAL_WH_RATIO)/(OPTIMAL_WH_RATIO)< WH_TOLERANCE and
            width*height > AREA_TOLERANCE):
 
@@ -75,55 +79,21 @@ while True:
             # Check if bounding boxes have correct angle of rotation
             if abs(abs(rotation) - 75) < DEGREE_TOLERANCE:
                 cv2.drawContours(tapeFrame, [box], 0, (255,255,0),2)
-                largest = True
-                for i in range(len(tapes)):
-                    if (rect[0][0] < tapes[i][0][0][0]):
-                        tapes.insert(i, [rect,1])
-                        largest = False
-                        break
-                if largest:
-                        tapes.append([rect,1])
+                for i in range(len(tapes_left)):
+                    if (box < tape[i][0]):
+                        tapes_left.insert(i, box)
+                    elif i == len(tapes_left)-1:
+                        tapes_left.append(box)
                 
             if abs(abs(rotation) - 5) < DEGREE_TOLERANCE:
                 cv2.drawContours(tapeFrame, [box], 0, (0,255,255),2)
-                largest = True
-                for i in range(len(tapes)):
-                    if (rect[0][0] < tapes[i][0][0][0]):
-                        tapes.insert(i, [rect,0])
-                        largest = False
-                        break
-                if largest:
-                        tapes.append([rect,0])
+                tapes_right.append(box)
 
-    leftTape = True
-    print('length before' + str(len(tapes)))
-    print(tapes)
 
-#    for i,tape in enumerate(tapes):
-    i = 0
-    while i < len(tapes):
-        print(tapes[i][1])
-        
-        if (tapes[i][1] != leftTape):
-            print('removed tape:' + str(tapes[i][1]))
-            tapes.pop(i)
-        else:
-            leftTape = not leftTape
-            i += 1
 
-    print('done')
-    print(tapes)
-    print(len(tapes))
-
-    for tape in tapes:
-        box = cv2.boxPoints(tape[0])
-        box = np.int0(box)
-        cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
-        
     # Display frames            
     #cv2.imshow('rectangle', frame)
     cv2.imshow('tape detection', tapeFrame)
-    cv2.imshow('tape paired', finalFrame)
 
     # Take a pic and save to template.png
     if cv2.waitKey(1) == ord('c'):
