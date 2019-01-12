@@ -15,10 +15,12 @@ import numpy as np
 
 DEGREE_TOLERANCE = 7
 OPTIMAL_WH_RATIO = 4.0/11.0
-WH_TOLERANCE = .30
+WH_TOLERANCE = .40
 AREA_TOLERANCE = 1000
 CAM_CENTER = (320,240)
 
+LEFT_TAPE = 1
+RIGHT_TAPE = 0
 
 cap = cv2.VideoCapture(1)
 
@@ -35,7 +37,7 @@ for line in settings:
 while True:
 
     ret, frame = cap.read()
-    tapeFrame = frame
+    tapeFrame = frame.copy()
     finalFrame = frame.copy()
 
     # Blur image to reduce noise
@@ -46,7 +48,7 @@ while True:
     #cv2.imshow('gray', gray)
 
     # Convert image to black and white
-    ret, thresh = cv2.threshold(gray, 175, 255, 0)
+    ret, thresh = cv2.threshold(gray, 200, 255, 0)
     cv2.imshow('thresh', thresh)
 
     # Find contours from black and white image
@@ -67,16 +69,18 @@ while True:
         height = max(rect[1])
         rotation = rect[2]
 
-        # Check for width height ratio and 
+        # Check for width height ratio and min area 
         if(height!=0 and
            abs((width/height)-OPTIMAL_WH_RATIO)/(OPTIMAL_WH_RATIO)< WH_TOLERANCE and
-           width*height > AREA_TOLERANCE):
+           width*height >= AREA_TOLERANCE):
 
             cv2.drawContours(tapeFrame, [box], 0, (0,0,255),2)
 
             # Check if bounding boxes have correct angle of rotation
             if abs(abs(rotation) - 75) < DEGREE_TOLERANCE:
                 cv2.drawContours(tapeFrame, [box], 0, (255,255,0),2)
+
+                # Insert boxes from left to right
                 largest = True
                 for i in range(len(tapes)):
                     if (rect[0][0] < tapes[i][0][0][0]):
@@ -85,9 +89,12 @@ while True:
                         break
                 if largest:
                         tapes.append([rect,1])
+            else:
+                print("Failed left angle test: " + str(rotation))
                 
             if abs(abs(rotation) - 5) < DEGREE_TOLERANCE:
                 cv2.drawContours(tapeFrame, [box], 0, (0,255,255),2)
+
                 largest = True
                 for i in range(len(tapes)):
                     if (rect[0][0] < tapes[i][0][0][0]):
@@ -96,28 +103,34 @@ while True:
                         break
                 if largest:
                         tapes.append([rect,0])
-
+            else:
+                print("Failed right angle test: " + str(rotation))
+        elif width*height < AREA_TOLERANCE:
+            print("Area too small: " + str(width*height))
+        else:
+            print("WH Ratio off: " + str(abs((width/height)-OPTIMAL_WH_RATIO)/(OPTIMAL_WH_RATIO)))
+                
     pairs = [] # array of pairs
-    leftTape = True # start by looking for left tape
+    currTape = LEFT_TAPE # start by looking for left tape
     for tape in tapes:
-        if tape[1] == leftTape: # if tape matches the correct orientation 
+        if tape[1] == currTape: # if tape matches the correct orientation 
             pairs.append(tape) # add it to the pairs
-            leftTape = not leftTape # move on to the next tape orientation
-        elif tape[1] == 1: # if tape is supposed to be a matching right but is left
+            currTape = not currTape # move on to the next tape orientation
+        elif tape[1] == LEFT_TAPE: # if tape is supposed to be a matching right but is left
             pairs.pop() # remove the left tape before it
             pairs.append(tape) #add the new left tape
 
     if  len(pairs) > 0 and pairs[-1][1] == 1:
         pairs.pop() # if the last tape is a left one remove it
         
-        
+    # Draw boxes around pairs
     for tape in pairs:
         box = cv2.boxPoints(tape[0])
         box = np.int0(box)
         cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
 
+    # Draw midpoint between centers of each box in a pair
     i = 0
-    print(pairs)
     while i < len(pairs):
         center1 = pairs[i][0][0]
         center2 = pairs[i + 1][0][0]
@@ -126,6 +139,7 @@ while True:
         cv2.circle(finalFrame, (int(x),int(y)), 3, (255, 255, 255), -1)
         i += 2
 
+    # Draw dot in center of the screen
     cv2.circle(finalFrame, CAM_CENTER, 3, (255, 255, 255), -1)
         
     # Display frames            
