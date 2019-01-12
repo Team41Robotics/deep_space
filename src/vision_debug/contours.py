@@ -17,8 +17,10 @@ DEGREE_TOLERANCE = 7
 OPTIMAL_WH_RATIO = 4.0/11.0
 WH_TOLERANCE = .30
 AREA_TOLERANCE = 1000
+CAM_CENTER = (320,240)
 
 cap = cv2.VideoCapture(1)
+
 
 # Load our webcam settings
 f = open('webcam_config.txt', 'r')
@@ -29,12 +31,12 @@ for line in settings:
     prop, val = line.split('=')
     cap.set(getattr(cv2, prop), float(val))
 
-
 while True:
 
     ret, frame = cap.read()
-    tapeFrame = frame
+    tapeFrame = frame.copy()
     finalFrame = frame.copy()
+    templateFrame = frame.copy()
 
     # Blur image to reduce noise
     blur = cv2.GaussianBlur(frame, (9,9), 0)
@@ -65,7 +67,7 @@ while True:
         height = max(rect[1])
         rotation = rect[2]
 
-        # Check for width height ratio and 
+        # Check for width height ratio and min area 
         if(height!=0 and
            abs((width/height)-OPTIMAL_WH_RATIO)/(OPTIMAL_WH_RATIO)< WH_TOLERANCE and
            width*height > AREA_TOLERANCE):
@@ -97,37 +99,67 @@ while True:
 
     leftTape = True
     print('length before' + str(len(tapes)))
-    print(tapes)
+    #print(tapes)
 
 #    for i,tape in enumerate(tapes):
+    if(len(tapes) % 2 == 1):
+        #print(tapes[-1][1])
+        if(tapes[len(tapes)-1][1]==1):
+            print("Removed extra left tape")
+            tapes.pop()
+        elif tapes[0][1] != 0:
+            print("Removed extra right tape")
+            tapes.pop(0)
+
     i = 0
     while i < len(tapes):
-        print(tapes[i][1])
-        
+        #print(tapes[i][1])
+        print(i)
         if (tapes[i][1] != leftTape):
             print('removed tape:' + str(tapes[i][1]))
             tapes.pop(i)
+            if not leftTape:
+                tapes.pop(i-1)
         else:
             leftTape = not leftTape
             i += 1
 
-    print('done')
-    print(tapes)
-    print(len(tapes))
+    #print('done')
+    #print(tapes)
+    #print(len(tapes))
 
-    for tape in tapes:
-        box = cv2.boxPoints(tape[0])
-        box = np.int0(box)
-        cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
+    if len(tapes) == 2:
+        center1 = tapes[0][0][0]
+        center2 = tapes[1][0][0]
+        x = (center1[0]+center2[0])/2
+        y = (center1[1]+center2[1])/2
+        cv2.circle(finalFrame, (int(x),int(y)), 3, (255, 255, 255), -1) 
+        cv2.circle(finalFrame, CAM_CENTER, 3, (255, 255, 255), -1)
+
+    #for tape in tapes:
+        
+        
+        #box = cv2.boxPoints(tape[0])
+        #box = np.int0(box)
+        #cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
+    
+    #i = 0
+    #while i < len(tapes):
+     #   if tape == leftTape:
+      #      pairs[i][0] = tape
+       # elif tape == rightTape:
+        #    pairs[i][1] = tape
+         #   i += 1
         
     # Display frames            
     #cv2.imshow('rectangle', frame)
     cv2.imshow('tape detection', tapeFrame)
     cv2.imshow('tape paired', finalFrame)
+    cv2.imshow('template', templateFrame)
 
     # Take a pic and save to template.png
     if cv2.waitKey(1) == ord('c'):
-        cv2.imwrite('template.png', frame)
+        cv2.imwrite('template.png', templateFrame)
 
     # Exit
     if cv2.waitKey(1) == ord('q'):
