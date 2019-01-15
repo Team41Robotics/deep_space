@@ -1,7 +1,7 @@
 import cv2
 import json
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 f = open('webcam_config.txt', 'w')
 
 for prop in dir(cv2):

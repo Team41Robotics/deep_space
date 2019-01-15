@@ -23,16 +23,18 @@ AREA_TOLERANCE = 1000
 LEFT_TAPE = 1
 RIGHT_TAPE = 0
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 CAM_CENTER = (int(width/2), int(height/2))
 
 # Load our webcam settings
+
 f = open('webcam_config.txt', 'r')
 settings = f.readlines()
 f.close()
+
 
 for line in settings:
     prop, val = line.split('=')
@@ -44,6 +46,7 @@ while True:
     ret, frame = cap.read()
     tapeFrame = frame.copy()
     finalFrame = frame.copy()
+    cv2.imshow("frame", frame)
 
     # Blur image to reduce noise
     blur = cv2.GaussianBlur(frame, (9,9), 0)
@@ -57,7 +60,7 @@ while True:
     cv2.imshow('thresh', thresh)
 
     # Find contours from black and white image
-    contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    img, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
     tapes = []
     
