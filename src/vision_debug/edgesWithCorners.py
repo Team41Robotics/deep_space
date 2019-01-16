@@ -25,9 +25,9 @@ RIGHT_TAPE = 0
 
 cap = cv2.VideoCapture(0)
 
-width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-CAM_CENTER = (int(width/2), int(height/2))
+cWidth = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+cHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+CAM_CENTER = (int(cWidth/2), int(cHeight/2))
 
 # Load our webcam settings
 
@@ -138,8 +138,8 @@ while True:
         cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
         for i in range(4):
 			cv2.circle(finalFrame, (int(box[i][0]),int(box[i][1])), 3, (0, 0, 0), -1)
-			x = (box[i][0] / width) * 2 - 1
-			y = (box[i][1] / height) * 2 - 1
+			x = (box[i][0] / cWidth) * 2 - 1
+			y = (box[i][1] / cHeight) * 2 - 1
 			print("x " + str(x) + ", y " + str(y))
 
     # Draw midpoint between centers of each box in a pair
@@ -150,6 +150,7 @@ while True:
         x = (center1[0]+center2[0])/2
         y = (center1[1]+center2[1])/2
         cv2.circle(finalFrame, (int(x),int(y)), 3, (255, 255, 255), -1)
+        print("Center x " + str((x / cWidth) * 2 - 1) + ", y " + str((y / cHeight) * 2 - 1))
         i += 2
 
     # Draw dot in center of the screen
