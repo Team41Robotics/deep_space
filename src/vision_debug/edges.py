@@ -14,7 +14,7 @@ import numpy as np
 # 7) Pair complementary tapes together
 # 8) Find midpoints of centers of complementary tapes
 
-DEGREE_TOLERANCE = 7
+DEGREE_TOLERANCE = 15
 OPTIMAL_WH_RATIO = 4.0/11.0
 WH_TOLERANCE = .50
 AREA_TOLERANCE = 1000
@@ -25,9 +25,9 @@ RIGHT_TAPE = 0
 
 cap = cv2.VideoCapture(0)
 
-width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-CAM_CENTER = (int(width/2), int(height/2))
+cWidth = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+cHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+CAM_CENTER = (int(cWidth/2), int(cHeight/2))
 
 # Load our webcam settings
 
@@ -50,13 +50,13 @@ while True:
 
     # Blur image to reduce noise
     blur = cv2.GaussianBlur(frame, (9,9), 0)
-
+    
     # Extract green channel
     g = blur[:,:,1]
     cv2.imshow('green', g)
 
     # Convert image to black and white
-    ret, thresh = cv2.threshold(g, 200, 255, 0)
+    ret, thresh = cv2.threshold(g, 205, 255, 0)
     cv2.imshow('thresh', thresh)
 
     # Find contours from black and white image
@@ -72,7 +72,7 @@ while True:
         rect = cv2.minAreaRect(contour)
         box = cv2.boxPoints(rect)
         box = np.int0(box)
-        
+
         width = min(rect[1])
         height = max(rect[1])
         rotation = rect[2]
@@ -131,11 +131,16 @@ while True:
     if  len(pairs) > 0 and pairs[-1][1] == 1:
         pairs.pop() # if the last tape is a left one remove it
         
-    # Draw boxes around pairs
+    # Draw boxes around pairs and points at their corners
     for tape in pairs:
         box = cv2.boxPoints(tape[0])
         box = np.int0(box)
         cv2.drawContours(finalFrame, [box], 0, (255,0,255),2)
+        for i in range(4):
+			cv2.circle(finalFrame, (int(box[i][0]),int(box[i][1])), 3, (0, 0, 0), -1)
+			x = (box[i][0] / cWidth) * 2 - 1
+			y = (box[i][1] / cHeight) * 2 - 1
+			print("x " + str(x) + ", y " + str(y))
 
     # Draw midpoint between centers of each box in a pair
     i = 0
@@ -145,6 +150,7 @@ while True:
         x = (center1[0]+center2[0])/2
         y = (center1[1]+center2[1])/2
         cv2.circle(finalFrame, (int(x),int(y)), 3, (255, 255, 255), -1)
+        print("Center x " + str((x / cWidth) * 2 - 1) + "\ny " + str((y / cHeight) * 2 - 1))
         i += 2
 
     # Draw dot in center of the screen
