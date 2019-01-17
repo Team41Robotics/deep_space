@@ -1,0 +1,2 @@
+48.5031289,37.1961727,19.25,17.211875,13.06149
+_view_angle_x, _view_angle_y, _cal_dist, _cal_span_x, _cal_span_y
