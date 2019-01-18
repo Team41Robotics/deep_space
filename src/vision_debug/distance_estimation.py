@@ -4,12 +4,15 @@ import math
 class CameraEstimator: 
 	# it is assumed that x and y are already normalized
 	
-	def __init__(self, ref_x, ref_y, _view_angle_x, _view_angle_y, _cal_dist, _cal_span_x, _cal_span_y): 
-		self.view_angle_x = _view_angle_x*math.pi/180
-		self.view_angle_y = _view_angle_y*math.pi/180
+	def __init__(self, ref, _view_angle_x, _view_angle_y, _cal_dist, _cal_span_x, _cal_span_y): 
+		ref = np.matrix(ref)
+		ref_x = ref[:,0]
+		ref_y = ref[:,1]
+		self.view_angle_x = math.radians(_view_angle_x)
+		self.view_angle_y = math.radians(_view_angle_y)
 		self.cal_dist = _cal_dist
-		self.cal_span_x = np.matrix(_cal_span_x).T
-		self.cal_span_y = np.matrix(_cal_span_y).T
+		self.cal_span_x = np.matrix(_cal_span_x)
+		self.cal_span_y = np.matrix(_cal_span_y)
 		self.Ax = np.matrix(np.column_stack([ref_x,-np.ones(len(ref_x))]))
 		self.Ay = np.matrix(np.column_stack([ref_y,-np.ones(len(ref_y))]))
 		# calculate the least mean squared coefficients given system Ax=b
@@ -39,7 +42,7 @@ class CameraEstimator:
 		x = np.asscalar(self.cal_span_x/2*tau_x)
 		y = np.asscalar(self.cal_span_y/2*tau_y)
 
-		return [dist,x,y]
+		return [dist,dist_est_x,dist_est_y,x,y]
 
-estimator = CameraEstimator([.1,.2,.3],[.4,.5,.6], 55, 77, 2, 4,10)
-print(estimator.get_distance([[.2,.4],[.3,.5],[.4,.6]]))
+#estimator = CameraEstimator([[.1,.4],[.2,.5],[.3,.6]], 55, 77, 2, 4,10)
+#print(estimator.get_distance([[.2,.4],[.3,.5],[.4,.6]]))
