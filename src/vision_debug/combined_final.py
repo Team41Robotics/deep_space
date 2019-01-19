@@ -15,7 +15,7 @@ from distance_estimation import CameraEstimator
 # 7) Pair complementary tapes together
 # 8) Find midpoints of centers of complementary tapes
 
-DEGREE_TOLERANCE = 15
+DEGREE_TOLERANCE = 10
 OPTIMAL_WH_RATIO = 4.0/11.0
 WH_TOLERANCE = .50
 AREA_TOLERANCE = 1000
@@ -32,7 +32,7 @@ CAM_CENTER = (int(cWidth/2), int(cHeight/2))
 
 # Load our webcam settings
 
-wconfig = open('webcam_config.txt', 'r')
+wconfig = open('calibration_files/webcam_config.txt', 'r')
 settings = wconfig.readlines()
 wconfig.close()
 
@@ -41,14 +41,14 @@ for line in settings:
     prop, val = line.split('=')
     cap.set(getattr(cv2, prop), float(val))
 
-ref_points_f = open('reference_points.txt', 'r')
+ref_points_f = open('calibration_files/reference_points.txt', 'r')
 ref_points = []
 for line in ref_points_f.readlines():
     x, y = line.split(',')
     ref_points.append([float(x),float(y)])
 ref_points_f.close()
 
-cal_data_f = open('calibration.txt', 'r')
+cal_data_f = open('calibration_files/calibration.txt', 'r')
 cal_data_str = cal_data_f.readline().split(',')
 v_angle_x = float(cal_data_str[0])
 v_angle_y = float(cal_data_str[1])
@@ -187,7 +187,6 @@ while True:
 		mirror = box.copy()
 		print("observed points:", box)
 		print("Distance:", ce.get_distance(box))
-		#Error Bitches		
 		print(ce.get_distance(mirror)[0]+ce.get_distance(mirror)[0]*.2955+-5.578)
 		i += 2
 
