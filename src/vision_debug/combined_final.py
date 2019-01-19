@@ -2,6 +2,12 @@ import cv2
 import numpy as np
 from distance_estimation import CameraEstimator
 
+from networktables import NetworkTables
+
+NetworkTables.initialize(server='10.0.41.2')
+sd = NetworkTables.getTable("SmartDashboard")
+#my_file = open('./actual_est','w')
+
 # 1) Get video feed
 # 2) blur?
 # 3) Extract green channel
@@ -15,7 +21,7 @@ from distance_estimation import CameraEstimator
 # 7) Pair complementary tapes together
 # 8) Find midpoints of centers of complementary tapes
 
-DEGREE_TOLERANCE = 10
+DEGREE_TOLERANCE = 15
 OPTIMAL_WH_RATIO = 4.0/11.0
 WH_TOLERANCE = .50
 AREA_TOLERANCE = 1000
@@ -184,10 +190,11 @@ while True:
 		box_y = np.multiply(np.true_divide(box[:,1],cHeight),2)-1
 		print("after",box_x)
 		box = np.column_stack([box_x,box_y])
-		mirror = box.copy()
 		print("observed points:", box)
-		print("Distance:", ce.get_distance(box))
-		print(ce.get_distance(mirror)[0]+ce.get_distance(mirror)[0]*.2955+-5.578)
+		estimated_distance = ce.get_distance(box)
+		print("Distance:", estimated_distance)
+		#sd.putNumber("Estimated Distance", estimated_distance[0])
+		print(estimated_distance[0]*.896+1.82)
 		i += 2
 
     # Draw dot in center of the screen
@@ -201,9 +208,14 @@ while True:
     # Take a pic and save to template.png
     if cv2.waitKey(1) == ord('c'):
         cv2.imwrite('template.png', frame)
-
+    '''if cv2.waitKey(1) == ord('z'):
+        act = sd.getNumber('Distance to Line', 0)
+        est = sd.getNumber('Estimated Distance', 0)
+        my_file.write(str(act) + ',' + str(est) + '\n')
+        print('Saved data point')'''
     # Exit
     if cv2.waitKey(1) == ord('q'):
+	#my_file.close()
         break
     
 cap.release()
