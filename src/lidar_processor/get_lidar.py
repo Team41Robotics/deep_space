@@ -31,14 +31,13 @@ def line_callback(msg):
 		angle_pub.publish(Float64(line.angle*180/pi))
 		dist_pub.publish(Float64(line.radius))
 		sd.putNumber('Angle of Line',line.angle*180/pi)
-		sd.putNumber('Distance to Line',line.radius)
-		
+		sd.putNumber('Distance to Line',line.radius * 39.3701)
+		est = sd.getNumber('Estimated Distance', 0)
+		err = (line.radius * 39.3701) - est
+		if err < 15:
+			sd.putNumber('Actual minus Estimated', err)
 
 def callback(msg):
-	# Distance directly in front of lidar
-	rospy.loginfo('Distance in front')
-	sd.putNumber('Distance in front',msg.ranges[0])
-	rospy.loginfo(msg.ranges[0])
 	# A silly little exercise
 	rospy.loginfo('min lidar index and distance')
 	index = 0
@@ -75,3 +74,4 @@ if __name__=='__main__':
 		main()
 	except rospy.ROSInterruptException:
 		rospy.loginfo('interrupt caught')
+		f.close()

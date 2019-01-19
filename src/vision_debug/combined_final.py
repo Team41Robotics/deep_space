@@ -194,7 +194,7 @@ while True:
 		estimated_distance = ce.get_distance(box)
 		print("Distance:", estimated_distance)
 		#sd.putNumber("Estimated Distance", estimated_distance[0])
-		print(estimated_distance[0]*.896+1.82)
+		print(estimated_distance[0])#*.896+1.82)
 		i += 2
 
     # Draw dot in center of the screen
