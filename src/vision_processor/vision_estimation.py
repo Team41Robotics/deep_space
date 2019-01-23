@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from distance_estimation import CameraEstimator
+import os
 
 # 1) Get video feed
 # 2) blur?
@@ -31,8 +32,9 @@ cHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 CAM_CENTER = (int(cWidth/2), int(cHeight/2))
 
 # Load our webcam settings
+dir_path = os.path.dirname(os.path.abspath(__file__))
 
-wconfig = open('calibration_files/webcam_config.txt', 'r')
+wconfig = open(dir_path+'/calibration_files/webcam_config.txt', 'r')
 settings = wconfig.readlines()
 wconfig.close()
 
@@ -40,14 +42,14 @@ for line in settings:
     prop, val = line.split('=')
     cap.set(getattr(cv2, prop), float(val))
 
-ref_points_f = open('calibration_files/reference_points.txt', 'r')
+ref_points_f = open(dir_path+'/calibration_files/reference_points.txt', 'r')
 ref_points = []
 for line in ref_points_f.readlines():
     x, y = line.split(',')
     ref_points.append([float(x),float(y)])
 ref_points_f.close()
 
-cal_data_f = open('calibration_files/calibration.txt', 'r')
+cal_data_f = open(dir_path+'/calibration_files/calibration.txt', 'r')
 cal_data_str = cal_data_f.readline().split(',')
 v_angle_x = float(cal_data_str[0])
 v_angle_y = float(cal_data_str[1])
@@ -179,6 +181,9 @@ def get_camera_data():
 
     return estimated_distance
 
-def camera_interrupt(): 
-    cap.release()
-    cv2.destroyAllWindows()
+def get_camera_interrupt(): 
+    if cv2.waitKey(1) == ord('q'):
+        cap.release()
+        cv2.destroyAllWindows()
+        return True
+    return False
