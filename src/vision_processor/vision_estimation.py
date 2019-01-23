@@ -58,7 +58,7 @@ cal_data_f.close()
 
 ce = CameraEstimator(ref_points,v_angle_x,v_angle_y,cal_dist,cal_span_x,cal_span_y)
 
-def getCameraData():
+def get_camera_data():
     ret, frame = cap.read()
     tapeFrame = frame.copy()
     finalFrame = frame.copy()

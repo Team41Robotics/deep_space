@@ -52,7 +52,7 @@ def callback(msg):
 	filter_scan(msg, -pi/4, pi/4)
 	rospy.loginfo('Published filter scan')
 
-def getLidarData():
+def get_lidar_data():
 	global sd
 	rospy.loginfo('Initializing network tables')
 	NetworkTables.initialize(server='10.0.41.2')
@@ -66,7 +66,7 @@ def getLidarData():
 def main():
 	rospy.init_node('lidar_processor')
 	rospy.loginfo('starting lidar processor')
-	getLidarData()
+	get_lidar_data()
 	rospy.spin()
 
 if __name__=='__main__':
@@ -74,4 +74,4 @@ if __name__=='__main__':
 		main()
 	except rospy.ROSInterruptException:
 		rospy.loginfo('interrupt caught')
-		f.close()
+		#f.close()

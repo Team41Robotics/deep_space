@@ -195,6 +195,7 @@ while True:
 		print("Distance:", estimated_distance)
 		#sd.putNumber("Estimated Distance", estimated_distance[0])
 		print(estimated_distance[0])#*.896+1.82)
+		#print("Distance w/Error:",(1.18223*estimated_distance[0]-4.73995))
 		i += 2
 
     # Draw dot in center of the screen
