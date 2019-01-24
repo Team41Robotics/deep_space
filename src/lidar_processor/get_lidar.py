@@ -5,11 +5,20 @@ from sensor_msgs.msg import LaserScan
 from laser_line_extraction.msg import LineSegment, LineSegmentList
 from std_msgs.msg import Float64
 from math import pi
+import tf
 
 sd = None # SmartDashboard instance
 pub = rospy.Publisher('filter_scan', LaserScan, queue_size=10) # Filtered scan topic from -45 to 45 degrees
-angle_pub = rospy.Publisher('debug_angle', Float64, queue_size = 1)
+angle_pub = rospy.Publisher('lidar_angle', Float64, queue_size = 1)
 dist_pub = rospy.Publisher('debug_distance', Float64, queue_size = 1)
+
+def broadcast_tf_lidar():
+	lidar_br = tf.TransformBroadcaster()	
+	lidar_br.sendTransform((10,5,0),[0,0,0,1],rospy.Time.now(),'base_lidar','base_link')
+
+def broadcast_tf_camera(theta):
+	camera_br = tf.TransformBroadcaster()	
+	camera_br.sendTransform((10.3,5,0),tf.transformations.quaternion_from_euler(0,0,theta),rospy.Time.now(),'base_camera','base_link')
 
 def filter_scan(msg, start_angle, end_angle):
 	start_index = int((start_angle - msg.angle_min) / msg.angle_increment)
@@ -27,30 +36,16 @@ def line_callback(msg):
 		for seg in msg.line_segments: # Look for line with angle closest to 0
 			if abs(seg.angle) < abs(line.angle):
 				line = seg
-		rospy.loginfo('Best line: radius ' + str(line.radius) + ', angle ' + str(line.angle))
 		angle_pub.publish(Float64(line.angle*180/pi))
 		dist_pub.publish(Float64(line.radius))
 		sd.putNumber('Angle of Line',line.angle*180/pi)
-		sd.putNumber('Distance to Line',line.radius * 39.3701)
-		est = sd.getNumber('Estimated Distance', 0)
-		err = (line.radius * 39.3701) - est
-		if err < 15:
-			sd.putNumber('Actual minus Estimated', err)
+		broadcast_tf_camera(line.angle)
+		#IS THIS WHERE I SHOULD PUT THIS?
+		broadcast_tf_lidar()
 
 def callback(msg):
-	# A silly little exercise
-	rospy.loginfo('min lidar index and distance')
-	index = 0
-	m = max(msg.ranges) # Minimum
-	for i in range(len(msg.ranges)):
-		if msg.ranges[i] < m and msg.ranges[i] > 0:
-			m = msg.ranges[i]
-			index = i
-	rospy.loginfo('{}:\t {}'.format(index,m))
-	sd.putNumber('Min index',index)
 	# Publish filter scan
 	filter_scan(msg, -pi/4, pi/4)
-	rospy.loginfo('Published filter scan')
 
 def get_lidar_data():
 	global sd
