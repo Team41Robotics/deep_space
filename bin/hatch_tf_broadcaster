@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+from hatch_tf_broadcaster import tf_broadcaster
+
+if __name__ == '__main__':
+	tf_broadcaster.main()

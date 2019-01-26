@@ -60,7 +60,7 @@ cal_data_f.close()
 
 ce = CameraEstimator(ref_points,v_angle_x,v_angle_y,cal_dist,cal_span_x,cal_span_y)
 
-def get_camera_data():
+def get_camera_data(debug_window):
     ret, frame = cap.read()
     tapeFrame = frame.copy()
     finalFrame = frame.copy()
@@ -73,7 +73,8 @@ def get_camera_data():
 
     # Convert image to black and white
     ret, thresh = cv2.threshold(g, 205, 255, 0)
-    cv2.imshow('thresh', thresh)
+    if debug_window:
+        cv2.imshow('thresh', thresh)
 
     # Find contours from black and white image
     img, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -176,8 +177,9 @@ def get_camera_data():
         
     # Display frames            
     #cv2.imshow('rectangle', frame)
-    cv2.imshow('tape detection', tapeFrame)
-    cv2.imshow('tape paired', finalFrame)
+    if debug_window:
+        cv2.imshow('tape detection', tapeFrame)
+        cv2.imshow('tape paired', finalFrame)
 
     return estimated_distance
 

@@ -14,11 +14,11 @@ dist_pub = rospy.Publisher('debug_distance', Float64, queue_size = 1)
 
 def broadcast_tf_lidar():
 	lidar_br = tf.TransformBroadcaster()	
-	lidar_br.sendTransform((10,5,0),[0,0,0,1],rospy.Time.now(),'base_lidar','base_link')
+	lidar_br.sendTransform((-10,5,0),[0,0,0,1],rospy.Time.now(),'base_lidar','base_link')
 
 def broadcast_tf_camera(theta):
 	camera_br = tf.TransformBroadcaster()	
-	camera_br.sendTransform((10.3,5,0),tf.transformations.quaternion_from_euler(0,0,theta),rospy.Time.now(),'base_camera','base_link')
+	camera_br.sendTransform((-10,5,0),tf.transformations.quaternion_from_euler(0,0,theta),rospy.Time.now(),'base_camera','base_link')
 
 def filter_scan(msg, start_angle, end_angle):
 	start_index = int((start_angle - msg.angle_min) / msg.angle_increment)
@@ -36,11 +36,10 @@ def line_callback(msg):
 		for seg in msg.line_segments: # Look for line with angle closest to 0
 			if abs(seg.angle) < abs(line.angle):
 				line = seg
-		angle_pub.publish(Float64(line.angle*180/pi))
+		angle_pub.publish(Float64(line.angle))
 		dist_pub.publish(Float64(line.radius))
 		sd.putNumber('Angle of Line',line.angle*180/pi)
 		broadcast_tf_camera(line.angle)
-		#IS THIS WHERE I SHOULD PUT THIS?
 		broadcast_tf_lidar()
 
 def callback(msg):

@@ -1,0 +1,6 @@
+image: hatch.png
+resolution: 1.5 
+origin: [114.0, -120.0, 1.5708]
+occupied_thresh: 0.7
+free_thresh: 0.3
+negate: 1

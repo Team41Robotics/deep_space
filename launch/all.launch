@@ -1,4 +1,6 @@
 <launch>
+	<arg name="map_file" default="$(find deep_space)/maps/hatch.yaml" />
+	<arg name="debug_window" default="0" />
 	<node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
 		<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
 		<param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
@@ -23,5 +25,10 @@
 		<param name="~outlier_dist" value="0.06" />
 		<param name="~min_line_points" value="10" />
 	</node>
-	<node pkg="deep_space" type="vision_processor" name="vision_processor" output="screen"></node>
+	<node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"></node>
+	<node pkg="deep_space" type="vision_processor" name="vision_processor" output="screen">
+		<param name="debug_window" value="$(arg debug_window)" />
+	</node>
+	<node pkg="deep_space" type="hatch_tf_broadcaster" name="hatch_tf_broadcaster" output="screen"></node>
+	<node pkg="deep_space" type="map_tf_broadcaster" name="map_tf_broadcaster" output="screen"></node>
 </launch>
