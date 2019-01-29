@@ -17,11 +17,9 @@ def get_vision_data(debug_window):
 
 def main():
 	global debug_window
-	rospy.init_node('vision_processor')
+	rospy.init_node('vision_processor',disable_signals = True)
 	rospy.loginfo('starting vision processor')
         debug_window = rospy.get_param('~debug_window')
-	print("THIS IS THE DEBUG WINDOW PARAM")
-	print(debug_window)
 	while not vision_estimation.get_camera_interrupt():
 		get_vision_data(debug_window)
 		

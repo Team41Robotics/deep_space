@@ -187,5 +187,6 @@ def get_camera_interrupt():
     if cv2.waitKey(1) == ord('q'):
         cap.release()
         cv2.destroyAllWindows()
+	print(destroyed)
         return True
     return False
