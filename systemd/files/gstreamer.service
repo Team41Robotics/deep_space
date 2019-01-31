@@ -1,0 +1,11 @@
+[Unit]
+Description=gstreamer
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/gstreamer.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

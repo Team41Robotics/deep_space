@@ -1,0 +1,11 @@
+[Unit]
+Description=deep_space
+After=roscore.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/deep_space.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

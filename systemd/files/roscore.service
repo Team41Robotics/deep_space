@@ -1,0 +1,11 @@
+[Unit]
+Description=roscore
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/roscore.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
