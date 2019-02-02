@@ -1,6 +1,6 @@
 [Unit]
 Description=gstreamer
-After=network-online.target
+After=roscore.service deep_space.service
 
 [Service]
 Type=simple

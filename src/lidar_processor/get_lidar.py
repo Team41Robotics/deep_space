@@ -36,7 +36,8 @@ def line_callback(msg):
 		for seg in msg.line_segments: # Look for line with angle closest to 0
 			if abs(seg.angle) < abs(line.angle):
 				line = seg
-		angle_pub.publish(Float64(line.angle))
+		#angle_pub.publish(Float64(line.angle))
+		angle_pub.publish(Float64(line.angle - pi/2))
 		dist_pub.publish(Float64(line.radius))
 		sd.putNumber('Angle of Line',line.angle*180/pi)
 		broadcast_tf_camera(line.angle)
@@ -44,7 +45,8 @@ def line_callback(msg):
 
 def callback(msg):
 	# Publish filter scan
-	filter_scan(msg, -pi/4, pi/4)
+	#filter_scan(msg, -pi/4, pi/4)
+	filter_scan(msg, pi/4, 3*pi/4)
 
 def get_lidar_data():
 	global sd

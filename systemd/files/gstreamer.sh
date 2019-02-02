@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Let's try waiting"
+sleep 30
+
 # Streaming function
 stream_cam () {
 	gst-launch-1.0 -v v4l2src device=/dev/v4l/by-id/$1 \
