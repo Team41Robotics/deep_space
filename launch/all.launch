@@ -52,4 +52,12 @@
 	<node pkg="deep_space" type="hatch_tf_broadcaster" name="hatch_tf_broadcaster" output="screen"></node>
 	<node pkg="deep_space" type="map_tf_broadcaster" name="map_tf_broadcaster" output="screen"></node>
 	<node pkg="deep_space" type="odom_broadcaster" name="odom_broadcaster" output="screen"></node>
+
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<rosparam file="$(find deep_space)/move_base_params/costmap_common_params.yaml" command="load" ns="global_costmap" />
+		<rosparam file="$(find deep_space)/move_base_params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+		<rosparam file="$(find deep_space)/move_base_params/local_costmap_params.yaml" command="load" />
+		<rosparam file="$(find deep_space)/move_base_params/global_costmap_params.yaml" command="load" />
+		<rosparam file="$(find deep_space)/move_base_params/base_local_planner_params.yaml" command="load" />
+	</node>
 </launch>
