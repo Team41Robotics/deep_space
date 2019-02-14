@@ -19,8 +19,8 @@ def meters(inches):
 	return inches*.0254
 
 def broadcast_tf(event):
-	tf_broadcaster.sendTransform((meters(-10),meters(-5),0),tf.transformations.quaternion_from_euler(0,0,pi/2),rospy.Time.now(),'base_lidar','base_link')
-	tf_broadcaster.sendTransform((meters(-10),meters(-5),0),tf.transformations.quaternion_from_euler(0,0,line_angle),rospy.Time.now(),'base_camera','base_link')
+	tf_broadcaster.sendTransform((meters(-14),meters(-8),0),tf.transformations.quaternion_from_euler(0,0,pi/2),rospy.Time.now(),'base_lidar','base_link')
+	tf_broadcaster.sendTransform((meters(-14),meters(-8),0),tf.transformations.quaternion_from_euler(0,0,line_angle),rospy.Time.now(),'base_camera','base_link')
 
 def filter_scan(msg, start_angle, end_angle):
 	start_index = int((start_angle - msg.angle_min) / msg.angle_increment)
