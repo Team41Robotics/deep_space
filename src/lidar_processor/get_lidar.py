@@ -13,14 +13,14 @@ angle_pub = rospy.Publisher('lidar_angle', Float64, queue_size = 1)
 dist_pub = rospy.Publisher('debug_distance', Float64, queue_size = 1)
 lidar_model = 'ydlidar'
 tf_broadcaster = tf.TransformBroadcaster()
-line_angle = 0 
+line_angle = 0 # global variable to hold the line returned by the line extractor
 
 def meters(inches):
 	return inches*.0254
 
 def broadcast_tf(event):
-	tf_broadcaster.sendTransform((meters(-14),meters(-8),0),tf.transformations.quaternion_from_euler(0,0,pi/2),rospy.Time.now(),'base_lidar','base_link')
-	tf_broadcaster.sendTransform((meters(-14),meters(-8),0),tf.transformations.quaternion_from_euler(0,0,line_angle),rospy.Time.now(),'base_camera','base_link')
+	tf_broadcaster.sendTransform((meters(-8),meters(-12),0),tf.transformations.quaternion_from_euler(0,0,pi/2),rospy.Time.now(),'base_lidar','base_link')
+	tf_broadcaster.sendTransform((meters(-8),meters(-12),0),tf.transformations.quaternion_from_euler(0,0,line_angle),rospy.Time.now(),'base_camera','base_link')
 
 def filter_scan(msg, start_angle, end_angle):
 	start_index = int((start_angle - msg.angle_min) / msg.angle_increment)
