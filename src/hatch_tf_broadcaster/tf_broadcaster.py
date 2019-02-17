@@ -16,6 +16,7 @@ def hatch_bl_tf():
 	br = tf2_ros.TransformBroadcaster()
 	try:
 		bl2cam = tfBuffer.lookup_transform('base_link', 'base_camera', rospy.Time())
+		odom2bl = tfBuffer.lookup_transform('odom', 'base_link', rospy.Time())
 	except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
 		#TODO: add correct exception here
 		return
@@ -28,21 +29,26 @@ def hatch_bl_tf():
 
 	#hatch to base_link
 	h2bl_mat = np.dot(h2cam_mat,np.linalg.inv(bl2cam_mat))
-	h2bl_tran = tf_conversions.transformations.translation_from_matrix(h2bl_mat)
-	h2bl_rot = tf_conversions.transformations.quaternion_from_matrix(h2bl_mat)
 
-	h2bl = TransformStamped()
-	h2bl.header.stamp = rospy.Time.now()
-	h2bl.header.frame_id = 'hatch_frame'
-	h2bl.child_frame_id = 'base_link'
-	h2bl.transform.translation.x = h2bl_tran[0]
-	h2bl.transform.translation.y = h2bl_tran[1]
-	h2bl.transform.translation.z = h2bl_tran[2]
-	h2bl.transform.rotation.x = h2bl_rot[0]
-	h2bl.transform.rotation.y = h2bl_rot[1]
-	h2bl.transform.rotation.z = h2bl_rot[2]
-	h2bl.transform.rotation.w = h2bl_rot[3]
-	br.sendTransform(h2bl)
+	odom2bl_trans_mat = (odom2bl.transform.translation.x,odom2bl.transform.translation.y,odom2bl.transform.translation.z)
+	odom2bl_rot_mat = [odom2bl.transform.rotation.x,odom2bl.transform.rotation.y,odom2bl.transform.rotation.z,odom2bl.transform.rotation.w]
+	odom2bl_mat = tf_conversions.transformations.concatenate_matrices(tf_conversions.transformations.translation_matrix(odom2bl_trans_mat),tf_conversions.transformations.quaternion_matrix(odom2bl_rot_mat))
+
+	h2odom_mat = np.dot(h2bl_mat,np.linalg.inv(odom2bl_mat))
+
+	h2odom_tran = tf_conversions.transformations.translation_from_matrix(h2odom_mat)
+	h2odom_rot = tf_conversions.transformations.quaternion_from_matrix(h2odom_mat)
+	h2odom.header.stamp = rospy.Time.now()
+	h2odom.header.frame_id = 'hatch_frame'
+	h2odom.child_frame_id = 'odom'
+	h2odom.transform.translation.x = h2odom_tran[0]
+	h2odom.transform.translation.y = h2odom_tran[1]
+	h2odom.transform.translation.z = h2odom_tran[2]
+	h2odom.transform.rotation.x = h2odom_rot[0]
+	h2odom.transform.rotation.y = h2odom_rot[1]
+	h2odom.transform.rotation.z = h2odom_rot[2]
+	h2odom.transform.rotation.w = h2odom_rot[3]
+        br.sendTransform(h2odom)
 
 def lidar_callback(msg): 
 	global theta 

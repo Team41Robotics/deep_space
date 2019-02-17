@@ -8,7 +8,7 @@ def read(fname):
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    packages=['lidar_processor','vision_processor','hatch_tf_broadcaster','map_tf_broadcaster'],
+    packages=['lidar_processor','vision_processor','hatch_tf_broadcaster','map_tf_broadcaster','odom_broadcaster'],
     package_dir={'': 'src'},
     platforms=['ROS/t_41_2019']
 )

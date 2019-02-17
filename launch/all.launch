@@ -51,4 +51,5 @@
 	</node>
 	<node pkg="deep_space" type="hatch_tf_broadcaster" name="hatch_tf_broadcaster" output="screen"></node>
 	<node pkg="deep_space" type="map_tf_broadcaster" name="map_tf_broadcaster" output="screen"></node>
+	<node pkg="deep_space" type="odom_broadcaster" name="odom_broadcaster" output="screen"></node>
 </launch>
