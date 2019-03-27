@@ -193,7 +193,7 @@ def get_camera_data(debug_window):
 			box = np.column_stack([box_x,box_y])
 			estimated_distance = ce.get_distance(box)
 			area1 = area2
-			sd.putNumber("horizontal_offset_normalized", x)
+			sd.putNumber("horizontal_offset_normalized", (x-CAM_CENTER[0])/(CAM_CENTER[0]*2))
 		i += 2
 
 	# Draw dot in center of the screen

@@ -12,4 +12,4 @@ else
 	export ROS_MASTER_URI="http://$ROS_HOSTNAME:5809"
 fi
 
-roslaunch deep_space all.launch
+roslaunch deep_space all_dwa.launch
